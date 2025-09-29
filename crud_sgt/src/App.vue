@@ -1,64 +1,82 @@
 <template>
   <div id="app">
-    <div class="layout">
-      <!-- Sidebar -->
-      <aside class="sidebar">
-        <h2 class="logo">Inventario</h2>
-        <ul class="menu">
-          <li><router-link to="/">🏠 Home</router-link></li>
+    <!-- Si estoy en login o registro, solo muestro esa vista -->
+    <div v-if="isAuthPage && !isLoggedIn">
+      <router-view />
+    </div>
 
-          <!-- Desplegable de Módulos -->
-          <li>
-            <div class="menu-item" @click="showModulo = !showModulo">
-              📋 Módulo
-              <span class="arrow">{{ showModulo ? "▲" : "▼" }}</span>
-            </div>
-            <ul v-if="showModulo" class="submenu">
-              <li>
-                <button
-                  @click="selectModuleAndNavigate('Responsable', '/ResponsableView')"
-                  :class="{ active: selectedModule === 'Responsable' }"
-                >
-                  👤 Responsables
-                </button>
-              </li>
-              <li>
-                <button
-                  @click="selectModuleAndNavigate('Ubicacion', '/UbicacionView')"
-                  :class="{ active: selectedModule === 'Ubicacion' }"
-                >
-                  📍 Ubicaciones
-                </button>
-              </li>
-              <li>
-                <button
-                  @click="selectModuleAndNavigate('Equipo', '/EquiposMedicosView')"
-                  :class="{ active: selectedModule === 'Equipo' }"
-                >
-                  🩺 Equipos Médicos
-                </button>
-              </li>
-            </ul>
-          </li>
+    <!-- Si estoy logueado o en home, muestro el layout -->
+    <div v-else>
+      <!-- Header -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <img src="logo.png" alt="Logo" class="logo-img" />
+          <h1 class="topbar-title">Inventario</h1>
+        </div>
+        <div class="topbar-right">
+          <router-link to="/LoginU" class="btn">Login</router-link>
+          <button class="btn logout" @click="logout">Cerrar Sesión</button>
+        </div>
+      </header>
 
-          <!-- Botones Crear y Editar fijos -->
-          <li class="actions">
-            <button :disabled="!selectedModule" @click="irCrear(selectedModule)">
-              ➕ Crear {{ selectedModule || '' }}
-            </button>
-            <button :disabled="!selectedModule" @click="irEditar(selectedModule)">
-              ✏️ Editar {{ selectedModule || '' }}
-            </button>
-          </li>
+      <div class="layout">
+        <!-- Sidebar -->
+        <aside class="sidebar">
+          <h2 class="logo">Inventario</h2>
+          <ul class="menu">
+            <li><router-link to="/">🏠 Home</router-link></li>
+            <!-- Desplegable de Módulos -->
+            <li>
+              <div class="menu-item" @click="showModulo = !showModulo">
+                📋 Módulo
+                <span class="arrow">{{ showModulo ? "▲" : "▼" }}</span>
+              </div>
+              <ul v-if="showModulo" class="submenu">
+                <li>
+                  <button
+                    @click="selectModuleAndNavigate('Responsable', '/ResponsableView')"
+                    :class="{ active: selectedModule === 'Responsable' }"
+                  >
+                    👤 Responsables
+                  </button>
+                </li>
+                <li>
+                  <button
+                    @click="selectModuleAndNavigate('Ubicacion', '/UbicacionView')"
+                    :class="{ active: selectedModule === 'Ubicacion' }"
+                  >
+                    📍 Ubicaciones
+                  </button>
+                </li>
+                <li>
+                  <button
+                    @click="selectModuleAndNavigate('Equipo', '/EquiposMedicosView')"
+                    :class="{ active: selectedModule === 'Equipo' }"
+                  >
+                    🩺 Equipos Médicos
+                  </button>
+                </li>
+              </ul>
+            </li>
 
-          <li><router-link to="/about">ℹ️ About</router-link></li>
-        </ul>
-      </aside>
+            <!-- Botones Crear y Editar -->
+            <li class="actions">
+              <button :disabled="!selectedModule" @click="irCrear(selectedModule)">
+                ➕ Crear {{ selectedModule || "" }}
+              </button>
+              <button :disabled="!selectedModule" @click="irEditar(selectedModule)">
+                ✏️ Editar {{ selectedModule || "" }}
+              </button>
+            </li>
+            <li><router-link to="/about">ℹ️ About</router-link></li>
+          </ul>
+        </aside>
 
-      <!-- Contenido principal -->
-      <main class="content">
-        <router-view />
-      </main>
+        <!-- Contenido principal -->
+        <main class="content">
+          <router-view />
+        </main>
+      </div>
     </div>
   </div>
 </template>
@@ -68,53 +86,94 @@ export default {
   data() {
     return {
       selectedModule: null,
-      showModulo: false
+      showModulo: false,
     };
+  },
+  computed: {
+    isAuthPage() {
+      return this.$route.path === "/LoginU" || this.$route.path === "/RegistrarU";
+    },
+    isLoggedIn() {
+      return !!localStorage.getItem("usuario");
+    },
   },
   methods: {
     selectModuleAndNavigate(modulo, route) {
-      this.selectedModule = modulo;  // activa botones Crear/Editar
-      this.$router.push(route);      // navega a la vista del módulo
+      if (!this.isLoggedIn) {
+        this.$router.push("/LoginU");
+        return;
+      }
+      this.selectedModule = modulo;
+      this.$router.push(route);
     },
     irCrear(modulo) {
+      if (!this.isLoggedIn) {
+        this.$router.push("/LoginU");
+        return;
+      }
       switch (modulo) {
-        case 'Responsable':
-          this.$router.push('/CrearResponsableView');
+        case "Responsable":
+          this.$router.push("/CrearResponsableView");
           break;
-        case 'Ubicacion':
-          this.$router.push('/CrearUbicacionView');
+        case "Ubicacion":
+          this.$router.push("/CrearUbicacionView");
           break;
-        case 'Equipo':
-          this.$router.push('/CrearEquiposMedicosView');
+        case "Equipo":
+          this.$router.push("/CrearEquiposMedicosView");
           break;
       }
     },
     irEditar(modulo) {
-      const id = prompt(`Ingresa el ID del ${modulo} a editar:`); 
+      if (!this.isLoggedIn) {
+        this.$router.push("/LoginU");
+        return;
+      }
+      const id = prompt(`Ingresa el ID del ${modulo} a editar:`);
       if (!id) return;
       switch (modulo) {
-        case 'Responsable':
+        case "Responsable":
           this.$router.push(`/EditarResponsableView/${id}`);
           break;
-        case 'Ubicacion':
+        case "Ubicacion":
           this.$router.push(`/EditarUbicacionView/${id}`);
           break;
-        case 'Equipo':
+        case "Equipo":
           this.$router.push(`/EditarEquiposMedicosView/${id}`);
           break;
       }
+    },
+    logout() {
+      if (!this.isLoggedIn) {
+        alert("No hay sesión activa.");
+        return;
+      }
+      // ✅ Eliminar usuario de localStorage
+      localStorage.removeItem("usuario");
+
+      // ✅ Redirigir a login
+      this.$router.push("/LoginU");
+
+      // ✅ Refrescar el estado
+      this.selectedModule = null;
+      this.showModulo = false;
+    },
+  },
+  created() {
+    if (this.isLoggedIn && this.$route.path === "/LoginU") {
+      this.$router.push("/");
     }
-  }
-}
+  },
+};
 </script>
 
+
 <style>
+/* --- Estilos previos del layout --- */
 .layout {
   display: flex;
   min-height: 100vh;
 }
 
-/* Sidebar */
 .sidebar {
   width: 240px;
   background: #2c3e50;
@@ -137,7 +196,6 @@ export default {
   margin: 10px 0;
 }
 
-/* Desplegable de módulos */
 .menu-item {
   display: flex;
   justify-content: space-between;
@@ -183,7 +241,6 @@ export default {
   background: #2ecc71;
 }
 
-/* Botones Crear y Editar */
 .actions button {
   display: block;
   width: 100%;
@@ -206,7 +263,6 @@ export default {
   background: #42b983;
 }
 
-/* Router links */
 .menu a {
   color: #bdc3c7;
   text-decoration: none;
@@ -217,10 +273,54 @@ export default {
   color: #42b983;
 }
 
-/* Contenido principal */
 .content {
   flex: 1;
   padding: 20px;
   background: #f8f9fa;
+}
+
+/* --- Header nuevo --- */
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #34495e;
+  color: #ecf0f1;
+  padding: 10px 20px;
+}
+
+.topbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.logo-img {
+  width: 35px;
+  height: 35px;
+  margin-right: 10px;
+}
+
+.topbar-title {
+  font-size: 22px;
+  margin: 0;
+}
+
+.topbar-right .btn {
+  margin-left: 10px;
+  padding: 6px 12px;
+  background: #2ecc71;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.topbar-right .btn.logout {
+  background: #e74c3c;
+}
+
+.topbar-right .btn:hover {
+  opacity: 0.9;
 }
 </style>

@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Servidor: 127.0.0.1
--- Tiempo de generación: 28-09-2025 a las 09:45:55
+-- Tiempo de generación: 29-09-2025 a las 00:59:21
 -- Versión del servidor: 10.4.32-MariaDB
 -- Versión de PHP: 8.2.12
 
@@ -95,6 +95,26 @@ INSERT INTO `ubicaciones` (`Codigo_ubi`, `ID_ubi`, `Nombre_ubi`, `Ubicacion`, `T
 ('U_PED0001', '3', 'Pediatria', 'piso 1', '5673410'),
 ('U_PED0002', '2', 'Pediatria', 'ala norte ', '3204184');
 
+-- --------------------------------------------------------
+
+--
+-- Estructura de tabla para la tabla `usuarios`
+--
+
+CREATE TABLE `usuarios` (
+  `id` int(11) NOT NULL,
+  `usuario` varchar(50) NOT NULL,
+  `password` varchar(255) NOT NULL,
+  `rol` enum('admin','medico','auxiliar') DEFAULT 'medico'
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Volcado de datos para la tabla `usuarios`
+--
+
+INSERT INTO `usuarios` (`id`, `usuario`, `password`, `rol`) VALUES
+(7, 'victor', '$2y$10$gSWNqU39dyysupuUb4PNP.10WfIKUNOlu6bX8WausMorDX1ImI1dK', 'medico');
+
 --
 -- Índices para tablas volcadas
 --
@@ -119,6 +139,23 @@ ALTER TABLE `responsables`
 --
 ALTER TABLE `ubicaciones`
   ADD PRIMARY KEY (`Codigo_ubi`);
+
+--
+-- Indices de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `usuario` (`usuario`);
+
+--
+-- AUTO_INCREMENT de las tablas volcadas
+--
+
+--
+-- AUTO_INCREMENT de la tabla `usuarios`
+--
+ALTER TABLE `usuarios`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- Restricciones para tablas volcadas
