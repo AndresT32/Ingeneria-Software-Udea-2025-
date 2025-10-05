@@ -84,12 +84,7 @@ const routes = [
     name: "RegistrarU",
     component: RegistrarU
   },
-  {
-    path: "/about",
-    name: "about",
-    component: () => import("../views/AboutView.vue"),
-    meta: { requiresAuth: true }
-  },
+
   {
     path: "/:catchAll(.*)",
     redirect: { name: "LoginU" }

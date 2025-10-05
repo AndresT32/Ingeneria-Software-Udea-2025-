@@ -10,7 +10,7 @@
       <!-- ✅ Header SIEMPRE visible -->
       <header class="topbar">
         <div class="topbar-left">
-          <img src="Health.jpg" alt="Logo" class="logo-img" />
+          <img src="../src/assets/usuario.jpg" alt="Logo Inventario" class="logo" />
           <h1 class="topbar-title">Hola, {{ usuario || "Invitado" }}</h1>
         </div>
         <div class="topbar-right">
@@ -23,7 +23,7 @@
         <!-- Sidebar solo si NO estoy en Home -->
         <aside v-if="!isHomePage" class="sidebar">
           <div class="sidebar-header">
-            <img src="Health.jpg" alt="Logo" class="sidebar-logo" />
+            <img src="../src/assets/Health.jpg" alt="Logo Inventario" class="logo" />
             <h2 class="sidebar-title">Inventario</h2>
           </div>
 
@@ -77,11 +77,7 @@
               </button>
             </li>
 
-            <li>
-              <router-link to="/about" class="menu-link">
-                <i class="fas fa-info-circle"></i> About
-              </router-link>
-            </li>
+            
           </ul>
         </aside>
 
@@ -215,11 +211,23 @@ export default {
 
 /* Header del sidebar */
 
-.sidebar-logo {
-  width: 40px;
-  height: 40px;
-  border-radius: 8px;
+/* 🔹 Imagen circular en el header */
+.topbar .logo {
+  width: 40px;              /* Ancho fijo */
+  height: 40px;             /* Alto fijo (mismo que el ancho) */
+  border-radius: 50%;       /* Hace el círculo */
+  object-fit: cover;        /* Rellena el círculo sin deformar */
   margin-right: 10px;
+}
+
+/* 🔹 Imagen cuadrada con bordes curvos en el sidebar */
+.sidebar .logo {
+  width: 120px;              /* Tamaño del logo */
+  height: 100px;             /* Cuadrado */
+  border-radius: 15px;      /* Bordes redondeados */
+  /*object-fit: cover;        /* Ajuste sin deformar */
+  display: block;
+  margin: 0 auto 12px;      /* Centrado */
 }
 
 .sidebar-title {
@@ -378,13 +386,6 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
-}
-
-.logo-img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  border: 2px solid #ecf0f1;
 }
 
 .topbar-title {

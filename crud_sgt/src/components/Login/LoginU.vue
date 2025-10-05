@@ -65,6 +65,7 @@ export default {
 
             // ✅ Actualizar reactividad global en App.vue (sin recargar)
             this.$root.loggedIn = true;
+            this.$root.usuario = data.usuario;
 
             // ✅ Redirigir a página principal
             this.$router.push({ name: "home" }); 
