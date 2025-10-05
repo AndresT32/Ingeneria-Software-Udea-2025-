@@ -1,92 +1,89 @@
 <template>
   <div id="app">
-    <!-- Si estoy en login o registro, solo muestro esa vista -->
-    <div v-if="isAuthPage && !isLoggedIn">
+    <!-- Si estoy en login o registro, muestro esas vistas y oculto todo el resto -->
+    <div v-if="isAuthPage">
       <router-view />
     </div>
 
-    <!-- Si estoy logueado (en home o en otras vistas), muestro topbar -->
-    <div v-else>
+    <!-- Si estoy logueado (home o cualquier otra vista del sistema), muestro topbar + layout -->
+    <div v-else-if="isLoggedIn">
       <!-- ✅ Header SIEMPRE visible -->
-<header class="topbar">
-  <div class="topbar-left">
-    <img src="Health.jpg" alt="Logo" class="logo-img" />
-    <h1 class="topbar-title">Hola, {{ usuario || "Invitado" }}</h1>
-  </div>
-  <div class="topbar-right">
-    <router-link to="/LoginU" class="btn">Login</router-link>
-    <button class="btn logout" @click="logout">Cerrar Sesión</button>
-  </div>
-</header>
-
+      <header class="topbar">
+        <div class="topbar-left">
+          <img src="Health.jpg" alt="Logo" class="logo-img" />
+          <h1 class="topbar-title">Hola, {{ usuario || "Invitado" }}</h1>
+        </div>
+        <div class="topbar-right">
+          <button class="btn logout" @click="logout">Cerrar Sesión</button>
+        </div>
+      </header>
 
       <!-- ✅ Layout general -->
       <div class="layout">
         <!-- Sidebar solo si NO estoy en Home -->
-<aside v-if="!isHomePage" class="sidebar">
-  <div class="sidebar-header">
-    <img src="Health.jpg" alt="Logo" class="sidebar-logo" />
-    <h2 class="sidebar-title">Inventario</h2>
-  </div>
+        <aside v-if="!isHomePage" class="sidebar">
+          <div class="sidebar-header">
+            <img src="Health.jpg" alt="Logo" class="sidebar-logo" />
+            <h2 class="sidebar-title">Inventario</h2>
+          </div>
 
-  <ul class="menu">
-    <li>
-      <router-link to="/" class="menu-link">
-        <i class="fas fa-home"></i> Home
-      </router-link>
-    </li>
+          <ul class="menu">
+            <li>
+              <router-link to="/" class="menu-link">
+                <i class="fas fa-home"></i> Home
+              </router-link>
+            </li>
 
-    <li>
-      <div class="menu-item" @click="showModulo = !showModulo">
-        <i class="fas fa-folder-open"></i> Módulo
-        <i class="fas" :class="showModulo ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
-      </div>
+            <li>
+              <div class="menu-item" @click="showModulo = !showModulo">
+                <i class="fas fa-folder-open"></i> Módulo
+                <i class="fas" :class="showModulo ? 'fa-chevron-up' : 'fa-chevron-down'"></i>
+              </div>
 
-      <ul v-if="showModulo" class="submenu">
-        <li>
-          <button
-            @click="selectModuleAndNavigate('Responsable', '/ResponsableView')"
-            :class="{ active: selectedModule === 'Responsable' }"
-          >
-            <i class="fas fa-user-md"></i> Responsables
-          </button>
-        </li>
-        <li>
-          <button
-            @click="selectModuleAndNavigate('Ubicacion', '/UbicacionView')"
-            :class="{ active: selectedModule === 'Ubicacion' }"
-          >
-            <i class="fas fa-map-marker-alt"></i> Ubicaciones
-          </button>
-        </li>
-        <li>
-          <button
-            @click="selectModuleAndNavigate('Equipo', '/EquiposMedicosView')"
-            :class="{ active: selectedModule === 'Equipo' }"
-          >
-            <i class="fas fa-stethoscope"></i> Equipos Médicos
-          </button>
-        </li>
-      </ul>
-    </li>
+              <ul v-if="showModulo" class="submenu">
+                <li>
+                  <button
+                    @click="selectModuleAndNavigate('Responsable', '/ResponsableView')"
+                    :class="{ active: selectedModule === 'Responsable' }"
+                  >
+                    <i class="fas fa-user-md"></i> Responsables
+                  </button>
+                </li>
+                <li>
+                  <button
+                    @click="selectModuleAndNavigate('Ubicacion', '/UbicacionView')"
+                    :class="{ active: selectedModule === 'Ubicacion' }"
+                  >
+                    <i class="fas fa-map-marker-alt"></i> Ubicaciones
+                  </button>
+                </li>
+                <li>
+                  <button
+                    @click="selectModuleAndNavigate('Equipo', '/EquiposMedicosView')"
+                    :class="{ active: selectedModule === 'Equipo' }"
+                  >
+                    <i class="fas fa-stethoscope"></i> Equipos Médicos
+                  </button>
+                </li>
+              </ul>
+            </li>
 
-    <li class="actions">
-      <button :disabled="!selectedModule" @click="irCrear(selectedModule)">
-        <i class="fas fa-plus-circle"></i> Crear {{ selectedModule || "" }}
-      </button>
-      <button :disabled="!selectedModule" @click="irEditar(selectedModule)">
-        <i class="fas fa-edit"></i> Editar {{ selectedModule || "" }}
-      </button>
-    </li>
+            <li class="actions">
+              <button :disabled="!selectedModule" @click="irCrear(selectedModule)">
+                <i class="fas fa-plus-circle"></i> Crear {{ selectedModule || "" }}
+              </button>
+              <button :disabled="!selectedModule" @click="irEditar(selectedModule)">
+                <i class="fas fa-edit"></i> Editar {{ selectedModule || "" }}
+              </button>
+            </li>
 
-    <li>
-      <router-link to="/about" class="menu-link">
-        <i class="fas fa-info-circle"></i> About
-      </router-link>
-    </li>
-  </ul>
-</aside>
-
+            <li>
+              <router-link to="/about" class="menu-link">
+                <i class="fas fa-info-circle"></i> About
+              </router-link>
+            </li>
+          </ul>
+        </aside>
 
         <!-- Contenido principal -->
         <main class="content">
@@ -94,107 +91,108 @@
         </main>
       </div>
     </div>
+
+    <!-- Si no está logueado y no es login/registro → redirigir -->
+    <div v-else>
+      <router-view />
+    </div>
   </div>
 </template>
 
-
-
-  <script>
-  export default {
-    data() {
-      return {
-        selectedModule: null,
-        showModulo: false,
-        loggedIn: !!localStorage.getItem("usuario"),
-        usuario:"",
-      };
+<script>
+export default {
+  data() {
+    return {
+      selectedModule: null,
+      showModulo: false,
+      loggedIn: !!localStorage.getItem("usuario"),
+      usuario: "",
+    };
+  },
+  computed: {
+    isAuthPage() {
+      return this.$route.path === "/LoginU" || this.$route.path === "/RegistrarU";
     },
-    computed: {
-      isAuthPage() {
-        return this.$route.path === "/LoginU" || this.$route.path === "/RegistrarU";
-      },
-      isLoggedIn() {
-        return this.loggedIn; 
-      },
-        isHomePage() {
-    // Si tu ruta Home tiene otro nombre, cámbiala aquí
-    return this.$route.name === "home" || this.$route.path === "/";
-      },
+    isLoggedIn() {
+      return this.loggedIn;
     },
-    methods: {
-      selectModuleAndNavigate(modulo, route) {
-        if (!this.isLoggedIn) {
-          this.$router.push("/LoginU");
-          return;
-        }
-        this.selectedModule = modulo;
-        this.$router.push(route);
-      },
-      irCrear(modulo) {
-        if (!this.isLoggedIn) {
-          this.$router.push("/LoginU");
-          return;
-        }
-        switch (modulo) {
-          case "Responsable":
-            this.$router.push("/CrearResponsableView");
-            break;
-          case "Ubicacion":
-            this.$router.push("/CrearUbicacionView");
-            break;
-          case "Equipo":
-            this.$router.push("/CrearEquiposMedicosView");
-            break;
-        }
-      },
-      irEditar(modulo) {
-        if (!this.isLoggedIn) {
-          this.$router.push("/LoginU");
-          return;
-        }
-        const id = prompt(`Ingresa el ID del ${modulo} a editar:`);
-        if (!id) return;
-        switch (modulo) {
-          case "Responsable":
-            this.$router.push(`/EditarResponsableView/${id}`);
-            break;
-          case "Ubicacion":
-            this.$router.push(`/EditarUbicacionView/${id}`);
-            break;
-          case "Equipo":
-            this.$router.push(`/EditarEquiposMedicosView/${id}`);
-            break;
-        }
-      },
-      logout() {
-        if (!this.isLoggedIn) {
-          alert("No hay sesión activa.");
-          return;
-        }
-        // ✅ Eliminar usuario de localStorage
-        localStorage.removeItem("usuario");
-
-        // ✅ Redirigir a login
+    isHomePage() {
+      return this.$route.name === "home" || this.$route.path === "/";
+    },
+  },
+  methods: {
+    selectModuleAndNavigate(modulo, route) {
+      if (!this.isLoggedIn) {
         this.$router.push("/LoginU");
-
-        // ✅ Refrescar el estado
-        this.selectedModule = null;
-        this.showModulo = false;
-        this.loggedIn = false;
-      },
-    },
-    created() {
-      if (this.isLoggedIn && this.$route.path === "/LoginU") {
-        this.$router.push("/");
+        return;
       }
-        const userData = localStorage.getItem("usuario");
-  if (userData) {
-    const parsed = JSON.parse(userData);
-    this.usuario = parsed.usuario || "";
-  }
+      this.selectedModule = modulo;
+      this.$router.push(route);
     },
-  };
-  </script>
+    irCrear(modulo) {
+      if (!this.isLoggedIn) {
+        this.$router.push("/LoginU");
+        return;
+      }
+      switch (modulo) {
+        case "Responsable":
+          this.$router.push("/CrearResponsableView");
+          break;
+        case "Ubicacion":
+          this.$router.push("/CrearUbicacionView");
+          break;
+        case "Equipo":
+          this.$router.push("/CrearEquiposMedicosView");
+          break;
+      }
+    },
+    irEditar(modulo) {
+      if (!this.isLoggedIn) {
+        this.$router.push("/LoginU");
+        return;
+      }
+      const id = prompt(`Ingresa el ID del ${modulo} a editar:`);
+      if (!id) return;
+      switch (modulo) {
+        case "Responsable":
+          this.$router.push(`/EditarResponsableView/${id}`);
+          break;
+        case "Ubicacion":
+          this.$router.push(`/EditarUbicacionView/${id}`);
+          break;
+        case "Equipo":
+          this.$router.push(`/EditarEquiposMedicosView/${id}`);
+          break;
+      }
+    },
+    logout() {
+      if (!this.isLoggedIn) {
+        alert("No hay sesión activa.");
+        return;
+      }
+      localStorage.removeItem("usuario");
+      this.$router.push("/LoginU");
+      this.selectedModule = null;
+      this.showModulo = false;
+      this.loggedIn = false;
+      this.usuario = "";
+    },
+  },
+  created() {
+    const userData = localStorage.getItem("usuario");
+    if (userData) {
+      const parsed = JSON.parse(userData);
+      this.usuario = parsed.usuario || "";
+      this.loggedIn = true;
+    }
+    // 🔒 Si no está logueado y no está en login/registro, mandarlo al login
+    if (!this.loggedIn && !this.isAuthPage) {
+      this.$router.push("/LoginU");
+    }
+  },
+};
+</script>
+
 
 
   <style>
