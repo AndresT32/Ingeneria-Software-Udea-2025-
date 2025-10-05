@@ -60,10 +60,13 @@ export default {
             this.mensaje = "Bienvenido " + data.usuario;
             this.exito = true;
 
-            // Guardar sesión en localStorage
+            // ✅ Guardar sesión en localStorage
             localStorage.setItem("usuario", JSON.stringify(data));
 
-            // Redirigir a página principal
+            // ✅ Actualizar reactividad global en App.vue (sin recargar)
+            this.$root.loggedIn = true;
+
+            // ✅ Redirigir a página principal
             this.$router.push({ name: "home" }); 
           } else {
             this.mensaje = data.error;
@@ -81,3 +84,4 @@ export default {
   },
 };
 </script>
+
